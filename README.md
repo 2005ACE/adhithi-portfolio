@@ -1,19 +1,29 @@
 # Adhithi Mudaliyar — Portfolio
 
-A responsive, accessible personal portfolio focused on AI, software, data, and healthcare technology.
+A dark, interactive personal portfolio exploring healthcare, AI, data, software, and embedded engineering through a digital-anatomy visual system.
 
 ## Run locally
 
-Open `index.html` directly, or start any static file server in this directory.
+```bash
+npm install
+npm run dev
+```
 
-## Deploy
+## Build
 
-This is a static site with no build step. In Vercel, import the repository and leave the framework preset as **Other** with the project root unchanged.
+```bash
+npm run build
+npm run preview
+```
 
-## Updating content
+## Edit content
 
-- Page content and links: `index.html`
-- Core visual system: `styles.css`
-- Mobile layout overrides: `responsive-fixes.css`
-- Navigation and reveal interactions: `script.js`
-- Downloadable résumé: `resume.pdf`
+Personal content, links, experience, skills, projects, and research live in `src/content.js`. Visual styles are in `src/styles.css`, while the 3D stage is isolated in `src/scene.js`.
+
+## Deploy to Vercel
+
+Import the GitHub repository. Vercel detects Vite automatically and uses `npm run build`, with `dist` as the output directory.
+
+## 3D asset and fallback
+
+The anatomical skeleton is stored locally in `public/models`. Attribution and the full license are documented in `THIRD_PARTY_NOTICES.md` and `public/licenses`. If WebGL is unavailable or reduced motion is preferred, the site uses `public/images/skeleton-fallback.png` while preserving all content and navigation.

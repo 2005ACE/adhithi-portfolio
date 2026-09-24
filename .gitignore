@@ -6,3 +6,5 @@ test-animation.html
 
 # Local system files
 .DS_Store
+node_modules/
+dist/

@@ -1,0 +1,2 @@
+html,body{max-width:100%;overflow-x:clip}
+@media(max-width:800px){.story-column,.hero,.hero>*,.panel{min-width:0;max-width:100%}.hero h1{width:100%;max-width:100%;text-wrap:normal;overflow-wrap:break-word}.hero-copy{width:100%;max-width:100%}}
