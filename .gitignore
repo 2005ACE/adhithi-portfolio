@@ -1,0 +1,8 @@
+# Legacy assets not used by the portfolio
+images/
+profile-photo.jpeg
+video.mp4
+test-animation.html
+
+# Local system files
+.DS_Store
