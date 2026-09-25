@@ -15,7 +15,7 @@ export async function initAnatomyStage(){
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   let renderer;try{renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'high-performance'})}catch(error){document.documentElement.classList.add('no-webgl');status.textContent='Static anatomy';throw error}
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.9;
-  const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(24,1,.01,100);camera.position.set(0,.05,5.05);camera.lookAt(0,.02,0);
+  const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(24,1,.01,100);camera.position.set(0,.02,9.2);camera.lookAt(0,0,0);
   scene.add(new THREE.HemisphereLight(0xaecbd0,0x090b0d,1.05));
   const key=new THREE.DirectionalLight(0xd5e5e6,2.1);key.position.set(2.8,3.5,4);scene.add(key);
   const rim=new THREE.PointLight(0x78abb5,11,8);rim.position.set(-2.2,.7,1.6);scene.add(rim);
@@ -24,7 +24,7 @@ export async function initAnatomyStage(){
   const source=gltf.scene;source.updateMatrixWorld(true);const model=new THREE.Group();model.add(source);
   const meshes=[];source.traverse((node)=>{if(node.isMesh){const nodeIndex=gltf.parser.associations.get(node)?.nodes;node.name=nodeIndex==null?node.name:gltf.parser.json.nodes[nodeIndex]?.name||node.name;meshes.push(node)}});
   const mirrored=new THREE.Group();meshes.filter((mesh)=>/\.r\.?$/i.test(mesh.name.trim())).forEach((mesh)=>{const clone=mesh.clone();clone.name=mesh.name.replace(/\.r\.?$/i,'.l');clone.geometry=mesh.geometry;mesh.updateWorldMatrix(true,false);clone.matrix.copy(mesh.matrixWorld).premultiply(new THREE.Matrix4().makeScale(-1,1,1));clone.matrix.decompose(clone.position,clone.quaternion,clone.scale);mirrored.add(clone);meshes.push(clone)});model.add(mirrored);
-  const box=new THREE.Box3().setFromObject(model);const size=box.getSize(new THREE.Vector3());const center=box.getCenter(new THREE.Vector3());model.position.sub(center);model.scale.setScalar(2.55/size.y);
+  const box=new THREE.Box3().setFromObject(model);const size=box.getSize(new THREE.Vector3());const center=box.getCenter(new THREE.Vector3());model.position.sub(center);model.scale.setScalar(2.28/size.y);
   meshes.forEach((mesh)=>{mesh.material=new THREE.MeshPhysicalMaterial({color:0x8e989b,roughness:.47,metalness:.3,transmission:.05,transparent:true,opacity:.7,clearcoat:.12,emissive:0x071014,emissiveIntensity:.12});mesh.userData.level=.25;mesh.userData.target=.25});
 
   const overlay=createOverlay(center,size);model.add(overlay.group);scene.add(model);
@@ -41,7 +41,7 @@ export async function initAnatomyStage(){
   const resize=()=>{const rect=canvas.getBoundingClientRect();renderer.setSize(Math.max(1,rect.width),Math.max(1,rect.height),false);camera.aspect=Math.max(1,rect.width)/Math.max(1,rect.height);camera.updateProjectionMatrix()};new ResizeObserver(resize).observe(canvas);resize();
 
   function start(){if(raf||paused||!stageVisible||document.hidden)return;last=performance.now();raf=requestAnimationFrame(animate)}
-  function animate(now){raf=0;if(paused||!stageVisible||document.hidden)return;const dt=Math.min((now-last)/1000,.05);last=now;const blend=reduce?1:1-Math.exp(-dt/0.22);for(const mesh of meshes){mesh.userData.level+=(mesh.userData.target-mesh.userData.level)*blend;const level=mesh.userData.level;mesh.material.color.setRGB(.46+level*.16,.5+level*.2,.52+level*.23);mesh.material.emissive.set(level>.4?0x12343b:0x071014);mesh.material.emissiveIntensity=.08+level*.5;mesh.material.opacity=.56+level*.26}if(!reduce)model.rotation.y=.075*Math.sin(now*.0002);overlay.update(now,currentView,reduce);canvas.dataset.rotation=model.rotation.y.toFixed(5);renderer.render(scene,camera);raf=requestAnimationFrame(animate)}
+  function animate(now){raf=0;if(paused||!stageVisible||document.hidden)return;const dt=Math.min((now-last)/1000,.05);last=now;const blend=reduce?1:1-Math.exp(-dt/0.22);for(const mesh of meshes){mesh.userData.level+=(mesh.userData.target-mesh.userData.level)*blend;const level=mesh.userData.level;mesh.material.color.setRGB(.46+level*.16,.5+level*.2,.52+level*.23);mesh.material.emissive.set(level>.4?0x12343b:0x071014);mesh.material.emissiveIntensity=.08+level*.5;mesh.material.opacity=.1+level*.5}if(!reduce)model.rotation.y=.075*Math.sin(now*.0002);overlay.update(now,currentView,reduce);canvas.dataset.rotation=model.rotation.y.toFixed(5);renderer.render(scene,camera);raf=requestAnimationFrame(animate)}
   if(reduce){renderer.render(scene,camera)}else start();
 }
 
