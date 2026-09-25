@@ -19,6 +19,7 @@ export async function initAnatomyStage(){
   scene.add(new THREE.HemisphereLight(0xaecbd0,0x090b0d,1.05));
   const key=new THREE.DirectionalLight(0xd5e5e6,2.1);key.position.set(2.8,3.5,4);scene.add(key);
   const rim=new THREE.PointLight(0x78abb5,11,8);rim.position.set(-2.2,.7,1.6);scene.add(rim);
+  const particles=createParticles(scene);
   const draco=new DRACOLoader().setDecoderPath('/draco/');const loader=new GLTFLoader().setDRACOLoader(draco);
   const gltf=await loader.loadAsync('/models/overview-skeleton.glb');draco.dispose();
   const source=gltf.scene;source.updateMatrixWorld(true);const model=new THREE.Group();model.add(source);
@@ -43,8 +44,19 @@ export async function initAnatomyStage(){
   const resize=()=>{const rect=canvas.getBoundingClientRect();renderer.setSize(Math.max(1,rect.width),Math.max(1,rect.height),false);camera.aspect=Math.max(1,rect.width)/Math.max(1,rect.height);camera.updateProjectionMatrix()};new ResizeObserver(resize).observe(canvas);resize();
 
   function start(){if(raf||paused||!stageVisible||document.hidden)return;last=performance.now();raf=requestAnimationFrame(animate)}
-  function animate(now){raf=0;if(paused||!stageVisible||document.hidden)return;const dt=Math.min((now-last)/1000,.05);last=now;const blend=reduce?1:1-Math.exp(-dt/0.22);for(const mesh of meshes){mesh.userData.level+=(mesh.userData.target-mesh.userData.level)*blend;const level=mesh.userData.level;mesh.material.color.setRGB(.46+level*.16,.5+level*.2,.52+level*.23);mesh.material.emissive.set(level>.4?0x12343b:0x071014);mesh.material.emissiveIntensity=.08+level*.5;mesh.material.opacity=.1+level*.5}model.position.x=THREE.MathUtils.lerp(2.1,0,travelProgress);model.position.y=baseY+THREE.MathUtils.lerp(introOffset,0,travelProgress);const idle=reduce?0:.075*Math.sin(now*.0002);model.rotation.y=idle+THREE.MathUtils.lerp(-.12,0,travelProgress);overlay.update(now,currentView,reduce);canvas.dataset.rotation=model.rotation.y.toFixed(5);canvas.dataset.travelProgress=travelProgress.toFixed(3);canvas.dataset.verticalOffset=(model.position.y-baseY).toFixed(3);renderer.render(scene,camera);raf=requestAnimationFrame(animate)}
+  function animate(now){raf=0;if(paused||!stageVisible||document.hidden)return;const dt=Math.min((now-last)/1000,.05);last=now;const blend=reduce?1:1-Math.exp(-dt/0.22);for(const mesh of meshes){mesh.userData.level+=(mesh.userData.target-mesh.userData.level)*blend;const level=mesh.userData.level;mesh.material.color.setRGB(.46+level*.16,.5+level*.2,.52+level*.23);mesh.material.emissive.set(level>.4?0x12343b:0x071014);mesh.material.emissiveIntensity=.08+level*.5;mesh.material.opacity=.1+level*.5}model.position.x=THREE.MathUtils.lerp(2.1,0,travelProgress);model.position.y=baseY+THREE.MathUtils.lerp(introOffset,0,travelProgress);const idle=reduce?0:.075*Math.sin(now*.0002);model.rotation.y=idle+THREE.MathUtils.lerp(-.12,0,travelProgress);particles.update(dt,reduce);overlay.update(now,currentView,reduce);canvas.dataset.rotation=model.rotation.y.toFixed(5);canvas.dataset.travelProgress=travelProgress.toFixed(3);canvas.dataset.verticalOffset=(model.position.y-baseY).toFixed(3);renderer.render(scene,camera);raf=requestAnimationFrame(animate)}
   if(reduce){renderer.render(scene,camera)}else start();
+}
+
+function createParticles(scene){
+  const count=matchMedia('(max-width: 760px)').matches?42:92;
+  const positions=new Float32Array(count*3),colors=new Float32Array(count*3),alphas=new Float32Array(count),sizes=new Float32Array(count),particles=[];
+  const cyan=new THREE.Color(0x8fc7cf),gray=new THREE.Color(0x9ca8aa);
+  for(let i=0;i<count;i++){const p={x:(Math.random()-.5)*7.2,y:(Math.random()-.5)*4.2,z:-8+Math.random()*7.4,speed:.08+Math.random()*.16,drift:(Math.random()-.5)*.035,phase:Math.random()*Math.PI*2};particles.push(p);positions[i*3]=p.x;positions[i*3+1]=p.y;positions[i*3+2]=p.z;const c=Math.random()<.16?cyan:gray;colors[i*3]=c.r;colors[i*3+1]=c.g;colors[i*3+2]=c.b;alphas[i]=0;sizes[i]=Math.random()>.85?2.6:1.4+Math.random()*1.2}
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.BufferAttribute(positions,3));geometry.setAttribute('color',new THREE.BufferAttribute(colors,3));geometry.setAttribute('aAlpha',new THREE.BufferAttribute(alphas,1));geometry.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));
+  const material=new THREE.ShaderMaterial({transparent:true,depthWrite:false,vertexColors:true,uniforms:{uPixelRatio:{value:Math.min(devicePixelRatio,1.5)}},vertexShader:'attribute float aAlpha; attribute float aSize; varying vec3 vColor; varying float vAlpha; uniform float uPixelRatio; void main(){vColor=color;vAlpha=aAlpha;vec4 mvPosition=modelViewMatrix*vec4(position,1.0);gl_PointSize=aSize*uPixelRatio*(260.0/-mvPosition.z);gl_Position=projectionMatrix*mvPosition;}',fragmentShader:'varying vec3 vColor; varying float vAlpha; void main(){float d=distance(gl_PointCoord,vec2(.5));float soft=1.0-smoothstep(.18,.5,d);gl_FragColor=vec4(vColor,soft*vAlpha);}' });
+  const points=new THREE.Points(geometry,material);points.renderOrder=-1;scene.add(points);let elapsed=0;
+  return {update(dt,reduced){if(reduced)return;elapsed+=dt;const pos=geometry.attributes.position.array,alpha=geometry.attributes.aAlpha.array;for(let i=0;i<count;i++){const p=particles[i];p.z+=p.speed*dt;p.x+=p.drift*dt+Math.sin(elapsed*.18+p.phase)*.0015;if(p.z>-.5){p.z=-8-Math.random()*1.5;p.x=(Math.random()-.5)*7.2;p.y=(Math.random()-.5)*4.2}const depth=(p.z+8)/7.5;alpha[i]=Math.sin(Math.PI*Math.min(1,Math.max(0,depth)))*.22;pos[i*3]=p.x;pos[i*3+1]=p.y;pos[i*3+2]=p.z}geometry.attributes.position.needsUpdate=true;geometry.attributes.aAlpha.needsUpdate=true}};
 }
 
 function createOverlay(center,size){
