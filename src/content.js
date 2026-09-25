@@ -1,5 +1,5 @@
 export const portfolio={
-person:{name:'Adhithi Mudaliyar',nickname:'Addy',school:'University of South Florida',degree:'B.S. Computer Science & Economics',graduation:'May 2028',email:'adhithimudaliyar@gmail.com',github:'https://github.com/2005ACE',linkedin:'https://www.linkedin.com/in/adhithi-mudaliyar/',resume:'/resume.pdf'},
+person:{name:'Adhithi Mudaliyar',nickname:'Addy',school:'University of South Florida',degree:'B.S. Computer Science & Economics',graduation:'May 2028',email:'adhithimudaliyar@gmail.com',github:'https://github.com/2005ACE',linkedin:'https://www.linkedin.com/in/adhithi-mudaliyar/',resume:'/Adhithi-Mudaliyar-Resume.pdf'},
 skills:[
 {title:'AI & Machine Learning',items:['Python','scikit-learn','XGBoost','PyTorch','Hugging Face Transformers','RAG','SHAP']},
 {title:'Software & Data',items:['Java','JavaScript','SQL','PostgreSQL','Pandas','NumPy','Spark','Airflow','Databricks','FastAPI','REST APIs']},
