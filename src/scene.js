@@ -31,17 +31,18 @@ export async function initAnatomyStage(){
   canvas.classList.add('is-ready');fallback.classList.add('is-hidden');status.textContent='Anatomy online';setTimeout(()=>status.classList.add('is-hidden'),1000);
   canvas.dataset.sceneReady='true';canvas.dataset.activeView='full';canvas.dataset.rotation='0';canvas.dataset.modelCount=String(meshes.length);
 
-  let currentView='full';let paused=reduce;let stageVisible=true;let raf=0;let last=performance.now();
+  let currentView='full';let travelProgress=0;let paused=reduce;let stageVisible=true;let raf=0;let last=performance.now();
   if(reduce){document.documentElement.classList.add('reduced-motion');motionButton.setAttribute('aria-pressed','true');motionLabel.textContent='Motion reduced'}
   function applyView(view){currentView=view;canvas.dataset.activeView=view;const matcher=regions[view];meshes.forEach((mesh)=>{const regional=matcher?.test(mesh.name);let target=.1;if(view==='outline')target=.9;else if(view==='full'||view==='contact')target=.25;else if(view==='neural')target=.12;else if(regional)target=1;mesh.userData.target=target});overlay.setView(view,reduce)}
   addEventListener('anatomy-view',(event)=>applyView(event.detail));applyView(document.body.dataset.view||'full');
+  addEventListener('anatomy-progress',(event)=>{travelProgress=reduce?(event.detail<.5?0:1):Math.max(0,Math.min(1,event.detail))});
   motionButton.addEventListener('click',()=>{paused=!paused;motionButton.setAttribute('aria-pressed',String(paused));motionLabel.textContent=paused?'Resume motion':'Pause motion';if(!paused)start()});
   new IntersectionObserver(([entry])=>{stageVisible=entry.isIntersecting;if(stageVisible&&!paused)start()},{threshold:.01}).observe(stage);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&stageVisible&&!paused)start()});
   const resize=()=>{const rect=canvas.getBoundingClientRect();renderer.setSize(Math.max(1,rect.width),Math.max(1,rect.height),false);camera.aspect=Math.max(1,rect.width)/Math.max(1,rect.height);camera.updateProjectionMatrix()};new ResizeObserver(resize).observe(canvas);resize();
 
   function start(){if(raf||paused||!stageVisible||document.hidden)return;last=performance.now();raf=requestAnimationFrame(animate)}
-  function animate(now){raf=0;if(paused||!stageVisible||document.hidden)return;const dt=Math.min((now-last)/1000,.05);last=now;const blend=reduce?1:1-Math.exp(-dt/0.22);for(const mesh of meshes){mesh.userData.level+=(mesh.userData.target-mesh.userData.level)*blend;const level=mesh.userData.level;mesh.material.color.setRGB(.46+level*.16,.5+level*.2,.52+level*.23);mesh.material.emissive.set(level>.4?0x12343b:0x071014);mesh.material.emissiveIntensity=.08+level*.5;mesh.material.opacity=.1+level*.5}if(!reduce)model.rotation.y=.075*Math.sin(now*.0002);overlay.update(now,currentView,reduce);canvas.dataset.rotation=model.rotation.y.toFixed(5);renderer.render(scene,camera);raf=requestAnimationFrame(animate)}
+  function animate(now){raf=0;if(paused||!stageVisible||document.hidden)return;const dt=Math.min((now-last)/1000,.05);last=now;const blend=reduce?1:1-Math.exp(-dt/0.22);for(const mesh of meshes){mesh.userData.level+=(mesh.userData.target-mesh.userData.level)*blend;const level=mesh.userData.level;mesh.material.color.setRGB(.46+level*.16,.5+level*.2,.52+level*.23);mesh.material.emissive.set(level>.4?0x12343b:0x071014);mesh.material.emissiveIntensity=.08+level*.5;mesh.material.opacity=.1+level*.5}model.position.x=THREE.MathUtils.lerp(2.1,0,travelProgress);const idle=reduce?0:.075*Math.sin(now*.0002);model.rotation.y=idle+THREE.MathUtils.lerp(-.12,0,travelProgress);overlay.update(now,currentView,reduce);canvas.dataset.rotation=model.rotation.y.toFixed(5);canvas.dataset.travelProgress=travelProgress.toFixed(3);renderer.render(scene,camera);raf=requestAnimationFrame(animate)}
   if(reduce){renderer.render(scene,camera)}else start();
 }
 
