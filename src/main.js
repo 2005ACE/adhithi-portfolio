@@ -2,7 +2,7 @@ import './styles.css';
 import { portfolio as data } from './content.js';
 
 const {person}=data;
-const portraitSrc=null;
+const portraitSrc='/images/profile-photo.jpeg';
 const chips=(items)=>items.map((item)=>`<span>${item}</span>`).join('');
 const list=(items)=>`<ul>${items.map((item)=>`<li>${item}</li>`).join('')}</ul>`;
 
