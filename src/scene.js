@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
-const labels={full:'Complete figure',chest:'Rib cage',neural:'Neural pathway',hand:'Hand + forearm',spine:'Vertebral column',skull:'Skull',contact:'Neural connection'};
+const labels={full:'Complete figure',chest:'Rib cage',neural:'Neural pathway',outline:'Complete outline',spine:'Vertebral column',skull:'Skull',contact:'Neural connection'};
 const regions={
   chest:/rib|costal|sternum|clavicle|scapula/i,
   hand:/(metacarpal|phalanx.*finger|radius|ulna|scaphoid|capitate|hamate|lunate|pisiform|trapezium|trapezoid)/i,
@@ -11,7 +11,7 @@ const regions={
 };
 
 export async function initAnatomyStage(){
-  const canvas=document.querySelector('#anatomy-canvas');const stage=document.querySelector('.anatomy-stage');const fallback=document.querySelector('.skeleton-fallback');const status=document.querySelector('.load-status');const regionLabel=document.querySelector('[data-region]');const motionButton=document.querySelector('.motion-toggle');const motionLabel=document.querySelector('[data-motion-label]');
+  const canvas=document.querySelector('#anatomy-canvas');const stage=document.querySelector('.anatomy-stage');const fallback=document.querySelector('.skeleton-fallback');const status=document.querySelector('.load-status');const motionButton=document.querySelector('.motion-toggle');const motionLabel=document.querySelector('[data-motion-label]');
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   let renderer;try{renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'high-performance'})}catch(error){document.documentElement.classList.add('no-webgl');status.textContent='Static anatomy';throw error}
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.9;
@@ -33,7 +33,7 @@ export async function initAnatomyStage(){
 
   let currentView='full';let paused=reduce;let stageVisible=true;let raf=0;let last=performance.now();
   if(reduce){document.documentElement.classList.add('reduced-motion');motionButton.setAttribute('aria-pressed','true');motionLabel.textContent='Motion reduced'}
-  function applyView(view){currentView=view;regionLabel.textContent=labels[view]||labels.full;canvas.dataset.activeView=view;const matcher=regions[view];meshes.forEach((mesh)=>{const handMatch=matcher?.test(mesh.name)&&!(/foot/i.test(mesh.name));mesh.userData.target=view==='full'||view==='contact'?.3:(view==='neural'?.16:(handMatch||matcher?.test(mesh.name)?1:.1))});overlay.setView(view,reduce)}
+  function applyView(view){currentView=view;canvas.dataset.activeView=view;const matcher=regions[view];meshes.forEach((mesh)=>{const regional=matcher?.test(mesh.name);let target=.1;if(view==='outline')target=.9;else if(view==='full'||view==='contact')target=.25;else if(view==='neural')target=.12;else if(regional)target=1;mesh.userData.target=target});overlay.setView(view,reduce)}
   addEventListener('anatomy-view',(event)=>applyView(event.detail));applyView(document.body.dataset.view||'full');
   motionButton.addEventListener('click',()=>{paused=!paused;motionButton.setAttribute('aria-pressed',String(paused));motionLabel.textContent=paused?'Resume motion':'Pause motion';if(!paused)start()});
   new IntersectionObserver(([entry])=>{stageVisible=entry.isIntersecting;if(stageVisible&&!paused)start()},{threshold:.01}).observe(stage);
