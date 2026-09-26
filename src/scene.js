@@ -34,11 +34,11 @@ export async function initAnatomyStage(){
   canvas.dataset.sceneReady='true';canvas.dataset.activeView='full';canvas.dataset.rotation='0';canvas.dataset.modelCount=String(meshes.length);
 
   let currentView='full';let travelProgress=0;let paused=reduce;let stageVisible=true;let raf=0;let last=performance.now();
-  if(reduce){document.documentElement.classList.add('reduced-motion');motionButton.setAttribute('aria-pressed','true');motionLabel.textContent='Motion reduced'}
+  if(reduce){document.documentElement.classList.add('reduced-motion');motionButton.setAttribute('aria-pressed','true');motionLabel.textContent='Motion reduced';dispatchEvent(new CustomEvent('anatomy-motion-paused',{detail:true}))}
   function applyView(view){currentView=view;canvas.dataset.activeView=view;const matcher=regions[view];meshes.forEach((mesh)=>{const regional=matcher?.test(mesh.name);let target=.1;if(view==='outline')target=.9;else if(view==='full'||view==='contact')target=.25;else if(view==='neural')target=.12;else if(regional)target=1;mesh.userData.target=target});overlay.setView(view,reduce)}
   addEventListener('anatomy-view',(event)=>applyView(event.detail));applyView(document.body.dataset.view||'full');
   addEventListener('anatomy-progress',(event)=>{travelProgress=reduce?(event.detail<.5?0:1):Math.max(0,Math.min(1,event.detail))});
-  motionButton.addEventListener('click',()=>{paused=!paused;motionButton.setAttribute('aria-pressed',String(paused));motionLabel.textContent=paused?'Resume motion':'Pause motion';if(!paused)start()});
+  motionButton.addEventListener('click',()=>{paused=!paused;motionButton.setAttribute('aria-pressed',String(paused));motionLabel.textContent=paused?'Resume motion':'Pause motion';dispatchEvent(new CustomEvent('anatomy-motion-paused',{detail:paused}));if(!paused)start()});
   new IntersectionObserver(([entry])=>{stageVisible=entry.isIntersecting;if(stageVisible&&!paused)start()},{threshold:.01}).observe(stage);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&stageVisible&&!paused)start()});
   const resize=()=>{const rect=canvas.getBoundingClientRect();renderer.setSize(Math.max(1,rect.width),Math.max(1,rect.height),false);camera.aspect=Math.max(1,rect.width)/Math.max(1,rect.height);camera.updateProjectionMatrix()};new ResizeObserver(resize).observe(canvas);resize();
