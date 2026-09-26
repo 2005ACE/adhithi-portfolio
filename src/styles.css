@@ -74,3 +74,9 @@ body{background:var(--bg)}
 .detail-dialog{z-index:40}.dialog-open .scroll-area{overflow:hidden}
 @media(max-width:760px){html,body,#app{height:auto;overflow-x:hidden;overflow-y:auto}.topbar{position:fixed}.topbar nav{justify-content:flex-start}.anatomy-stage{position:fixed;inset:0;height:auto;margin:0}.stage-frame{position:absolute;inset:0;height:100dvh}.scroll-area{height:auto;min-height:100dvh;overflow:visible;scroll-snap-type:none}.story-column{width:calc(100% - 34px);height:auto}.panel{height:auto;min-height:100svh;flex:none;padding:84px 0 55px;scroll-snap-align:none}.hero{min-height:100svh;padding-top:90px}.project-grid,.research-entries,.skill-list{grid-template-columns:1fr}.project-card{padding:18px}.research-entries{gap:16px}.skill-list article{min-height:0;padding:18px 0}.motion-toggle{right:12px;bottom:30px}.model-credit{right:12px;bottom:10px}.skeleton-fallback{opacity:.1}.hero h1{font-size:clamp(2.3rem,10vw,3.2rem)}}
 @media(max-width:760px){.topbar{grid-template-columns:auto 1fr auto}.resume-download{font-size:10px;padding:7px 9px}.about-layout{grid-template-columns:1fr;gap:24px}.about-portrait{max-height:340px;max-width:280px}.anatomy-stage{opacity:.55}}
+
+/* The sharp portrait is always the safe fallback; the scan state is opt-in. */
+.portrait-base{filter:none;opacity:0}
+.portrait-color{clip-path:inset(0)}
+.portrait-reveal.is-scanning .portrait-base{filter:grayscale(1) blur(4px) saturate(.35);opacity:.42}
+.portrait-reveal.is-scanning .portrait-color{clip-path:inset(0 0 100% 0);animation:portrait-reveal 1.2s cubic-bezier(.2,.7,.2,1) forwards}
