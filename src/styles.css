@@ -79,5 +79,6 @@ body{background:var(--bg)}
 .portrait-diagnostic{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:10px}.portrait-replay{padding:7px 10px;border:1px solid var(--line);border-radius:999px;color:var(--text);background:rgba(9,11,13,.55);font:10px DM Mono,monospace;cursor:pointer}.portrait-replay:hover{border-color:var(--cyan);color:var(--cyan2)}.portrait-build,.portrait-status{color:var(--dim);font:9px DM Mono,monospace}.portrait-status{color:var(--cyan)}
 .portrait-base{filter:none;opacity:0}
 .portrait-color{clip-path:inset(0)}
+.portrait-reveal.is-midpoint .portrait-base{filter:grayscale(1) blur(4px) saturate(.35);opacity:.42}.portrait-reveal.is-midpoint .portrait-color{clip-path:inset(0 0 50% 0)}.portrait-reveal.is-midpoint .portrait-scan{top:50%;opacity:1}.portrait-reveal.is-midpoint .portrait-corners{opacity:1}
 .portrait-reveal.is-scanning .portrait-base{filter:grayscale(1) blur(4px) saturate(.35);opacity:.42}
 .portrait-reveal.is-scanning .portrait-color{clip-path:inset(0 0 100% 0);animation:portrait-reveal 1.2s cubic-bezier(.2,.7,.2,1) forwards}
