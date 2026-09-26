@@ -24,6 +24,7 @@
 .about-layout .prose{transition:opacity .38s ease,transform .38s ease}
 body.about-entrance .anatomy-stage{opacity:.28;transition:opacity .45s ease}
 body.about-entrance .particle-layer{opacity:.2}
+.about-foreground{position:relative;width:100%;transform-origin:50% 50%;will-change:transform}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.skeleton-fallback{opacity:.55!important}#anatomy-canvas{display:none!important}}
 .no-webgl #anatomy-canvas,.reduced-motion #anatomy-canvas{display:none}.no-webgl .skeleton-fallback,.reduced-motion .skeleton-fallback{opacity:.55}
 
