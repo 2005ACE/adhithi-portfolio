@@ -16,8 +16,8 @@
 .about-layout .portrait-exit{width:min(100%,330px);max-height:none;aspect-ratio:auto;display:flex;flex-direction:column;align-items:center;align-self:center}
 .about-layout .portrait-reveal{width:100%;height:auto;aspect-ratio:3/4;flex:0 0 auto}
 .about-layout .portrait-signature{width:92%;height:62px;margin:20px auto 0;flex:0 0 62px}
-.portrait-signature .signature-pulse{stroke:var(--cyan);stroke-width:1.8}
-.portrait-signature .signature-addy{stroke:var(--text);stroke-width:2.7}
+.portrait-signature .signature-pulse,.portrait-signature .signature-addy{stroke:var(--cyan);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.portrait-reveal.is-drawing + .portrait-signature{opacity:1}
 @media(max-width:760px){.about-layout .portrait-exit{width:min(100%,300px);margin-inline:auto}.about-layout .portrait-signature{margin-top:18px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.skeleton-fallback{opacity:.55!important}#anatomy-canvas{display:none!important}}
 .no-webgl #anatomy-canvas,.reduced-motion #anatomy-canvas{display:none}.no-webgl .skeleton-fallback,.reduced-motion .skeleton-fallback{opacity:.55}
