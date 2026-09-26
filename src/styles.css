@@ -76,6 +76,7 @@ body{background:var(--bg)}
 @media(max-width:760px){.topbar{grid-template-columns:auto 1fr auto}.resume-download{font-size:10px;padding:7px 9px}.about-layout{grid-template-columns:1fr;gap:24px}.about-portrait{max-height:340px;max-width:280px}.anatomy-stage{opacity:.55}}
 
 /* The sharp portrait is always the safe fallback; the scan state is opt-in. */
+.portrait-diagnostic{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:10px}.portrait-replay{padding:7px 10px;border:1px solid var(--line);border-radius:999px;color:var(--text);background:rgba(9,11,13,.55);font:10px DM Mono,monospace;cursor:pointer}.portrait-replay:hover{border-color:var(--cyan);color:var(--cyan2)}.portrait-build,.portrait-status{color:var(--dim);font:9px DM Mono,monospace}.portrait-status{color:var(--cyan)}
 .portrait-base{filter:none;opacity:0}
 .portrait-color{clip-path:inset(0)}
 .portrait-reveal.is-scanning .portrait-base{filter:grayscale(1) blur(4px) saturate(.35);opacity:.42}
