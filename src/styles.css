@@ -10,6 +10,15 @@
 @media(max-width:980px){.topbar{grid-template-columns:1fr auto auto;gap:14px}.nav-toggle{display:grid;width:36px;height:34px;place-content:center;gap:5px;border:1px solid var(--line);color:var(--text);background:transparent}.nav-toggle i{width:16px;border-top:1px solid}.topbar nav{position:absolute;top:calc(100% + 6px);right:20px;display:none;width:220px;flex-direction:column;padding:9px;border:1px solid var(--line);background:#101417}.topbar nav.open{display:flex}.topbar nav a{padding:10px}.page-grid{grid-template-columns:minmax(0,1fr) 340px;gap:30px}.project{grid-template-columns:1fr 145px}}
 @media(max-width:760px){:root{--nav:62px}.topbar{padding:0 17px}.page-grid{display:block;width:calc(100% - 34px)}.story-column{width:100%}.anatomy-stage{width:100%;height:330px;margin:0 0 20px}.stage-frame{position:relative;top:auto;height:100%}.hero{min-height:0;padding:115px 0 38px}.hero h1{font-size:clamp(2.85rem,11vw,4.2rem);text-wrap:balance}.hero-copy{font-size:16px}.panel{padding:60px 0}.section-head h2{font-size:clamp(2.5rem,10vw,3.4rem)}.skill-list article{display:block;padding:16px 0}.skill-list h3{margin-bottom:5px}.project{grid-template-columns:1fr;padding:18px}.project-visual{min-height:145px}.case-study{grid-template-columns:1fr;gap:13px}.timeline article{grid-template-columns:1fr;gap:7px}.contact-links{margin-bottom:10px}footer{width:calc(100% - 34px);display:block}footer span:nth-child(2){display:none}footer a{display:block;margin-top:8px}.model-credit,.motion-toggle{display:none}}
 @media(max-width:480px){.hero h1{font-size:clamp(2.65rem,12.5vw,3.6rem)}.actions{flex-direction:column}.button{width:100%}.anatomy-stage{height:290px}.stage-frame:before{inset:7px}.region-annotation{top:16px;right:15px;font-size:8px}.contact-actions{align-items:stretch;flex-direction:column}.copy-email{justify-content:center}.research-list dl div{grid-template-columns:1fr;gap:3px}}
+
+/* About portrait group: the signature is part of the section's measured flow. */
+.about-layout{align-items:center;min-height:0}
+.about-layout .portrait-exit{width:min(100%,330px);max-height:none;aspect-ratio:auto;display:flex;flex-direction:column;align-items:center;align-self:center}
+.about-layout .portrait-reveal{width:100%;height:auto;aspect-ratio:3/4;flex:0 0 auto}
+.about-layout .portrait-signature{width:92%;height:62px;margin:20px auto 0;flex:0 0 62px}
+.portrait-signature .signature-pulse{stroke:var(--cyan);stroke-width:1.8}
+.portrait-signature .signature-addy{stroke:var(--text);stroke-width:2.7}
+@media(max-width:760px){.about-layout .portrait-exit{width:min(100%,300px);margin-inline:auto}.about-layout .portrait-signature{margin-top:18px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.skeleton-fallback{opacity:.55!important}#anatomy-canvas{display:none!important}}
 .no-webgl #anatomy-canvas,.reduced-motion #anatomy-canvas{display:none}.no-webgl .skeleton-fallback,.reduced-motion .skeleton-fallback{opacity:.55}
 
