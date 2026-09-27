@@ -33,8 +33,8 @@ export function initAbout({ scrollArea, about, nav, signatureMarkup }) {
     const width = frame.clientWidth; const height = frame.clientHeight;
     const ratio = devicePixelRatio || 1; meshCanvas.width = width * ratio; meshCanvas.height = height * ratio;
     meshContext.setTransform(ratio * width / 300, 0, 0, ratio * height / 400, 0, 0);
-    meshContext.clearRect(0, 0, 300, 400); meshContext.lineWidth = .55; meshContext.lineCap = 'round';
-    meshContext.strokeStyle = active ? 'rgba(143,199,207,.78)' : 'rgba(143,199,207,0)';
+    meshContext.clearRect(0, 0, 300, 400); meshContext.lineWidth = .42; meshContext.lineCap = 'round';
+    meshContext.strokeStyle = active ? 'rgba(143,199,207,.62)' : 'rgba(143,199,207,0)';
     meshContext.beginPath();
     for (let i = 0; i < meshSegments.length; i += 6) {
       const x1 = meshSegments[i]; const y1 = meshSegments[i + 1];
