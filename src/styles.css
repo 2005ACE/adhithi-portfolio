@@ -128,7 +128,7 @@ body:has(#about.about-playing) .scroll-area { z-index: 3; }
 #about .portrait-reveal.scan-done .portrait-mono{opacity:0}
 #about .portrait-reveal.scan-active .face-mesh{clip-path:inset(var(--scan,0%) 0 0 0);opacity:.82}
 #about .portrait-reveal.scan-active .face-mesh path{filter:drop-shadow(0 0 2px rgba(143,199,207,.42))}
-#about .portrait-reveal.scan-active:after{content:"";position:absolute;z-index:6;left:0;right:0;top:var(--scan,0%);height:34px;transform:translateY(-50%);pointer-events:none;background:linear-gradient(to bottom,transparent,rgba(143,199,207,.12) 40%,rgba(143,199,207,.2) 50%,transparent);border-top:1px solid rgba(172,219,224,.95);box-shadow:0 0 12px rgba(143,199,207,.45)}
+#about .portrait-reveal.scan-active:after{content:"";position:absolute;z-index:6;left:0;right:0;top:var(--scan,0%);height:12px;transform:translateY(-50%);pointer-events:none;background:linear-gradient(to bottom,transparent,rgba(143,199,207,.08) 42%,rgba(143,199,207,.14) 50%,transparent);border-top:1px solid rgba(172,219,224,.95);box-shadow:0 0 8px rgba(143,199,207,.35)}
 #about .portrait-reveal.scan-done .face-mesh{opacity:0}
 #about .face-mesh circle{fill:#b7e2e4;stroke:none;opacity:.72}
 .glb-face-mesh{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;opacity:0;mix-blend-mode:screen}

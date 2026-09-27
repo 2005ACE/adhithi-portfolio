@@ -36,10 +36,15 @@ export function initAbout({ scrollArea, about, nav, signatureMarkup }) {
     meshContext.clearRect(0, 0, 300, 400); meshContext.lineWidth = .55; meshContext.lineCap = 'round';
     meshContext.strokeStyle = active ? 'rgba(143,199,207,.78)' : 'rgba(143,199,207,0)';
     meshContext.beginPath();
+    const insideSilhouette = (x, y) => {
+      const head = ((x - 150) ** 2) / (58 ** 2) + ((y - 192) ** 2) / (84 ** 2) <= 1;
+      const body = y >= 238 && y <= 402 && x >= 74 - Math.max(0, y - 238) * .035 && x <= 226 + Math.max(0, y - 238) * .035;
+      return head || body;
+    };
     for (let i = 0; i < meshSegments.length; i += 6) {
       const y1 = 205 - meshSegments[i + 1] * 92; const y2 = 205 - meshSegments[i + 4] * 92;
       const x1 = 150 + meshSegments[i] * 82; const x2 = 150 + meshSegments[i + 3] * 82;
-      if (!active || y1 >= progress * 400 || y2 >= progress * 400) { meshContext.moveTo(x1, y1); meshContext.lineTo(x2, y2); }
+      if (insideSilhouette(x1, y1) && insideSilhouette(x2, y2) && (!active || y1 >= progress * 400 || y2 >= progress * 400)) { meshContext.moveTo(x1, y1); meshContext.lineTo(x2, y2); }
     }
     meshContext.stroke();
   }
