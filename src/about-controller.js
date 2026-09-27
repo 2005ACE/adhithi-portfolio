@@ -17,10 +17,34 @@ export function initAbout({ scrollArea, about, nav, signatureMarkup }) {
   mono.setAttribute('aria-hidden', 'true');
   frame.insertBefore(mono, image);
 
-  // The supplied GLB derivative is intentionally not mounted here until its
-  // standalone render has been validated. This keeps a bad rectangular mesh
-  // from obscuring the portrait while the asset is being corrected offline.
-  const drawMesh = () => {};
+  const meshCanvas = document.createElement('canvas');
+  meshCanvas.className = 'glb-face-mesh';
+  meshCanvas.setAttribute('aria-hidden', 'true');
+  frame.append(meshCanvas);
+  const meshContext = meshCanvas.getContext('2d');
+  let meshSegments = null;
+  fetch('/models/portrait-face-wireframe.bin').then(response => response.arrayBuffer()).then(buffer => {
+    const segments = new Uint32Array(buffer, 0, 1)[0];
+    meshSegments = new Float32Array(buffer, 4, segments * 6);
+    drawMesh(frame.classList.contains('scan-active') ? 0.5 : 0, frame.classList.contains('scan-active'));
+  }).catch(error => console.error('Portrait face mesh unavailable:', error));
+  function drawMesh(progress = 1, active = true) {
+    if (!meshContext || !meshSegments) return;
+    const width = frame.clientWidth; const height = frame.clientHeight;
+    const ratio = devicePixelRatio || 1; meshCanvas.width = width * ratio; meshCanvas.height = height * ratio;
+    meshContext.setTransform(ratio * width / 300, 0, 0, ratio * height / 400, 0, 0);
+    meshContext.clearRect(0, 0, 300, 400); meshContext.lineWidth = .55; meshContext.lineCap = 'round';
+    meshContext.strokeStyle = active ? 'rgba(143,199,207,.78)' : 'rgba(143,199,207,0)';
+    meshContext.beginPath();
+    for (let i = 0; i < meshSegments.length; i += 6) {
+      const x1 = meshSegments[i]; const y1 = meshSegments[i + 1];
+      const x2 = meshSegments[i + 2]; const y2 = meshSegments[i + 3];
+      if (!active || y1 >= progress * 400 || y2 >= progress * 400) {
+        meshContext.moveTo(x1, y1); meshContext.lineTo(x2, y2);
+      }
+    }
+    meshContext.stroke();
+  }
 
   const signature = document.createElement('div');
   signature.innerHTML = signatureMarkup;
