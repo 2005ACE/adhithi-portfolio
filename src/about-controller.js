@@ -17,37 +17,10 @@ export function initAbout({ scrollArea, about, nav, signatureMarkup }) {
   mono.setAttribute('aria-hidden', 'true');
   frame.insertBefore(mono, image);
 
-  const meshCanvas = document.createElement('canvas');
-  meshCanvas.className = 'glb-face-mesh';
-  meshCanvas.setAttribute('aria-hidden', 'true');
-  frame.append(meshCanvas);
-  const meshContext = meshCanvas.getContext('2d');
-  let meshSegments = null;
-  fetch('/models/portrait-wireframe.bin').then(response => response.arrayBuffer()).then(buffer => {
-    const triangles = new Uint32Array(buffer, 0, 1)[0];
-    meshSegments = new Float32Array(buffer, 4, triangles * 18);
-    drawMesh(frame.classList.contains('scan-active') ? 0.5 : 0, frame.classList.contains('scan-active'));
-  }).catch(error => console.error('Portrait mesh unavailable:', error));
-  function drawMesh(progress = 1, active = true) {
-    if (!meshContext || !meshSegments) return;
-    const width = frame.clientWidth; const height = frame.clientHeight;
-    const ratio = devicePixelRatio || 1; meshCanvas.width = width * ratio; meshCanvas.height = height * ratio;
-    meshContext.setTransform(ratio * width / 300, 0, 0, ratio * height / 400, 0, 0);
-    meshContext.clearRect(0, 0, 300, 400); meshContext.lineWidth = .55; meshContext.lineCap = 'round';
-    meshContext.strokeStyle = active ? 'rgba(143,199,207,.78)' : 'rgba(143,199,207,0)';
-    meshContext.beginPath();
-    const insideSilhouette = (x, y) => {
-      const head = ((x - 150) ** 2) / (58 ** 2) + ((y - 192) ** 2) / (84 ** 2) <= 1;
-      const body = y >= 238 && y <= 402 && x >= 74 - Math.max(0, y - 238) * .035 && x <= 226 + Math.max(0, y - 238) * .035;
-      return head || body;
-    };
-    for (let i = 0; i < meshSegments.length; i += 6) {
-      const y1 = 205 - meshSegments[i + 1] * 92; const y2 = 205 - meshSegments[i + 4] * 92;
-      const x1 = 150 + meshSegments[i] * 82; const x2 = 150 + meshSegments[i + 3] * 82;
-      if (insideSilhouette(x1, y1) && insideSilhouette(x2, y2) && (!active || y1 >= progress * 400 || y2 >= progress * 400)) { meshContext.moveTo(x1, y1); meshContext.lineTo(x2, y2); }
-    }
-    meshContext.stroke();
-  }
+  // The supplied GLB derivative is intentionally not mounted here until its
+  // standalone render has been validated. This keeps a bad rectangular mesh
+  // from obscuring the portrait while the asset is being corrected offline.
+  const drawMesh = () => {};
 
   const signature = document.createElement('div');
   signature.innerHTML = signatureMarkup;
