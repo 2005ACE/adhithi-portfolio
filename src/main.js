@@ -3,7 +3,7 @@ import { portfolio as data } from './content.js';
 import { initAbout } from './about-controller.js';
 
 const {person}=data;
-const portraitSrc='/images/profile-photo.jpeg';
+const portraitSrc='/images/profile-cutout.png';
 let portraitEntranceActive=false;
 const chips=(items)=>items.map((item)=>`<span>${item}</span>`).join('');
 const list=(items)=>`<ul>${items.map((item)=>`<li>${item}</li>`).join('')}</ul>`;
