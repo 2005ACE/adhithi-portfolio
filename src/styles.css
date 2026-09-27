@@ -119,3 +119,16 @@ body{background:var(--bg)}
 #about .portrait-exit { opacity: 1; transform: none; visibility: visible; }
 @media (prefers-reduced-motion: reduce) { #about .portrait-reveal.scan-done .portrait-color { opacity: 1; } }
 body:has(#about.about-playing) .scroll-area { z-index: 3; }
+.about-foreground{position:relative;width:100%;transform:none!important;}
+#about .portrait-reveal{position:relative;overflow:hidden;isolation:isolate;background:var(--bg)}
+#about .portrait-reveal .portrait-mono{position:absolute;inset:0;width:100%;height:100%;z-index:1;object-fit:cover;object-position:50% 24%;filter:grayscale(1) contrast(1.08) brightness(.62) saturate(.2);opacity:0;transition:none}
+#about .portrait-reveal .portrait-color{z-index:2;object-fit:cover;object-position:50% 24%}
+#about .portrait-reveal.scan-prepared .portrait-mono{opacity:1}
+#about .portrait-reveal.scan-active .portrait-mono{opacity:1;clip-path:inset(var(--scan,0%) 0 0 0)}
+#about .portrait-reveal.scan-done .portrait-mono{opacity:0}
+#about .portrait-reveal.scan-active .face-mesh{clip-path:inset(var(--scan,0%) 0 0 0);opacity:.82}
+#about .portrait-reveal.scan-active .face-mesh path{filter:drop-shadow(0 0 2px rgba(143,199,207,.42))}
+#about .portrait-reveal.scan-active:after{content:"";position:absolute;z-index:6;left:0;right:0;top:var(--scan,0%);height:34px;transform:translateY(-50%);pointer-events:none;background:linear-gradient(to bottom,transparent,rgba(143,199,207,.12) 40%,rgba(143,199,207,.2) 50%,transparent);border-top:1px solid rgba(172,219,224,.95);box-shadow:0 0 12px rgba(143,199,207,.45)}
+#about .portrait-reveal.scan-done .face-mesh{opacity:0}
+#about .face-mesh circle{fill:#b7e2e4;stroke:none;opacity:.72}
+#about .portrait-signature{margin-top:14px}
