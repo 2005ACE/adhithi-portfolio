@@ -135,3 +135,9 @@ body:has(#about.about-playing) .scroll-area { z-index: 3; }
 #about .portrait-reveal.scan-prepared .glb-face-mesh,#about .portrait-reveal.scan-active .glb-face-mesh{opacity:.88}
 #about .portrait-reveal.scan-done .glb-face-mesh{opacity:0}
 #about .portrait-signature{margin-top:14px}
+
+/* Supplied facial-imaging reference: positioned independently from the wider photo crop. */
+#about .portrait-reveal .portrait-wireframe{position:absolute;z-index:1;left:28%;top:clamp(96px,35%,140px);width:44%;height:auto;max-width:none;object-fit:contain;opacity:0;pointer-events:none;mix-blend-mode:screen;filter:saturate(.9) brightness(.82);clip-path:inset(0 0 0 0);transition:none}
+#about .portrait-reveal.scan-prepared .portrait-wireframe,#about .portrait-reveal.scan-active .portrait-wireframe{opacity:.9}
+#about .portrait-reveal.scan-active .portrait-wireframe{clip-path:inset(var(--scan,0%) 0 0 0)}
+#about .portrait-reveal.scan-done .portrait-wireframe{opacity:0;clip-path:inset(100% 0 0 0)}

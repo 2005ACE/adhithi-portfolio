@@ -11,40 +11,25 @@ export function initAbout({ scrollArea, about, nav, signatureMarkup }) {
   layout.replaceWith(foreground);
   foreground.append(layout);
 
-  const mono = image.cloneNode(true);
-  mono.className = 'about-portrait portrait-mono';
-  mono.alt = '';
-  mono.setAttribute('aria-hidden', 'true');
-  frame.insertBefore(mono, image);
-
-  const meshCanvas = document.createElement('canvas');
-  meshCanvas.className = 'glb-face-mesh';
-  meshCanvas.setAttribute('aria-hidden', 'true');
-  frame.append(meshCanvas);
-  const meshContext = meshCanvas.getContext('2d');
-  let meshSegments = null;
-  fetch('/models/portrait-face-wireframe.bin').then(response => response.arrayBuffer()).then(buffer => {
-    const segments = new Uint32Array(buffer, 0, 1)[0];
-    meshSegments = new Float32Array(buffer, 4, segments * 6);
-    drawMesh(frame.classList.contains('scan-active') ? 0.5 : 0, frame.classList.contains('scan-active'));
-  }).catch(error => console.error('Portrait face mesh unavailable:', error));
+  const wireframe = document.createElement('img');
+  wireframe.className = 'portrait-wireframe';
+  wireframe.src = '/assets/about-wireframe.png';
+  wireframe.alt = '';
+  wireframe.setAttribute('aria-hidden', 'true');
+  frame.insertBefore(wireframe, image);
   function drawMesh(progress = 1, active = true) {
-    if (!meshContext || !meshSegments) return;
-    const width = frame.clientWidth; const height = frame.clientHeight;
-    const ratio = devicePixelRatio || 1; meshCanvas.width = width * ratio; meshCanvas.height = height * ratio;
-    meshContext.setTransform(ratio * width / 300, 0, 0, ratio * height / 400, 0, 0);
-    meshContext.clearRect(0, 0, 300, 400); meshContext.lineWidth = .42; meshContext.lineCap = 'round';
-    meshContext.strokeStyle = active ? 'rgba(143,199,207,.62)' : 'rgba(143,199,207,0)';
-    meshContext.beginPath();
-    for (let i = 0; i < meshSegments.length; i += 6) {
-      const x1 = meshSegments[i]; const y1 = meshSegments[i + 1];
-      const x2 = meshSegments[i + 2]; const y2 = meshSegments[i + 3];
-      if (!active || y1 >= progress * 400 || y2 >= progress * 400) {
-        meshContext.moveTo(x1, y1); meshContext.lineTo(x2, y2);
-      }
-    }
-    meshContext.stroke();
+    wireframe.style.opacity = active ? '1' : '0';
+    wireframe.style.clipPath = active ? `inset(${progress * 100}% 0 0 0)` : 'inset(100% 0 0 0)';
   }
+
+  const assetsReady = Promise.all([image, wireframe].map(asset => {
+    const decode = () => asset.decode ? asset.decode().catch(() => {}) : Promise.resolve();
+    if (asset.complete && asset.naturalWidth) return decode();
+    return new Promise((resolve, reject) => {
+      asset.addEventListener('load', () => decode().then(resolve), { once: true });
+      asset.addEventListener('error', reject, { once: true });
+    });
+  }));
 
   const signature = document.createElement('div');
   signature.innerHTML = signatureMarkup;
@@ -132,12 +117,14 @@ export function initAbout({ scrollArea, about, nav, signatureMarkup }) {
     if (!active && !force) return;
     runId++;
     const id = runId;
-    prepare();
-    if (motionPaused || !image.naturalWidth) {
-      complete();
-      return;
-    }
     try {
+      await assetsReady;
+      if (id !== runId) return;
+      prepare();
+      if (motionPaused) {
+        complete();
+        return;
+      }
       await new Promise(resolve => setTimeout(resolve, 260));
       if (id !== runId) return;
       frame.classList.add('scan-active');
