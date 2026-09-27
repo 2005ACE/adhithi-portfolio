@@ -17,27 +17,32 @@ export function initAbout({ scrollArea, about, nav, signatureMarkup }) {
   mono.setAttribute('aria-hidden', 'true');
   frame.insertBefore(mono, image);
 
-  const mesh = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  mesh.classList.add('face-mesh');
-  mesh.setAttribute('viewBox', '0 0 300 400');
-  mesh.setAttribute('preserveAspectRatio', 'none');
-  mesh.setAttribute('aria-hidden', 'true');
-  // Hand-fitted landmarks for the supplied portrait crop (300x400).
-  const meshPaths = [
-    'M111 174 L124 166 L139 164 L151 169 L164 164 L178 166 L190 175',
-    'M112 181 L124 177 L137 180 L125 185 Z M164 180 L177 177 L189 181 L177 185 Z',
-    'M151 168 L148 190 L143 209 L151 216 L159 209 L154 190 Z',
-    'M141 218 Q151 224 161 218 M137 228 Q151 237 165 228',
-    'M113 176 L107 196 L112 218 L123 239 L139 253 L151 258 L163 253 L179 239 L190 218 L195 196 L189 176',
-    'M123 154 Q151 137 178 154 M118 160 Q151 146 184 160',
-    'M101 191 L108 218 L119 244 M201 191 L194 218 L183 244',
-    'M130 205 L137 217 L139 237 M172 205 L165 217 L163 237',
-    'M121 242 L137 253 L151 258 L165 253 L181 242',
-    'M127 162 L135 157 L143 160 M159 160 L167 157 L175 162'
-  ];
-  const landmarks = [[124,181],[177,181],[151,190],[151,216],[137,228],[165,228],[151,258]];
-  mesh.innerHTML = meshPaths.map(d => `<path d="${d}"/>`).join('') + landmarks.map(([x,y]) => `<circle cx="${x}" cy="${y}" r="1.4"/>`).join('');
-  frame.append(mesh);
+  const meshCanvas = document.createElement('canvas');
+  meshCanvas.className = 'glb-face-mesh';
+  meshCanvas.setAttribute('aria-hidden', 'true');
+  frame.append(meshCanvas);
+  const meshContext = meshCanvas.getContext('2d');
+  let meshSegments = null;
+  fetch('/models/portrait-wireframe.bin').then(response => response.arrayBuffer()).then(buffer => {
+    const triangles = new Uint32Array(buffer, 0, 1)[0];
+    meshSegments = new Float32Array(buffer, 4, triangles * 18);
+    drawMesh(frame.classList.contains('scan-active') ? 0.5 : 0, frame.classList.contains('scan-active'));
+  }).catch(error => console.error('Portrait mesh unavailable:', error));
+  function drawMesh(progress = 1, active = true) {
+    if (!meshContext || !meshSegments) return;
+    const width = frame.clientWidth; const height = frame.clientHeight;
+    const ratio = devicePixelRatio || 1; meshCanvas.width = width * ratio; meshCanvas.height = height * ratio;
+    meshContext.setTransform(ratio * width / 300, 0, 0, ratio * height / 400, 0, 0);
+    meshContext.clearRect(0, 0, 300, 400); meshContext.lineWidth = .55; meshContext.lineCap = 'round';
+    meshContext.strokeStyle = active ? 'rgba(143,199,207,.78)' : 'rgba(143,199,207,0)';
+    meshContext.beginPath();
+    for (let i = 0; i < meshSegments.length; i += 6) {
+      const y1 = 205 - meshSegments[i + 1] * 92; const y2 = 205 - meshSegments[i + 4] * 92;
+      const x1 = 150 + meshSegments[i] * 82; const x2 = 150 + meshSegments[i + 3] * 82;
+      if (!active || y1 >= progress * 400 || y2 >= progress * 400) { meshContext.moveTo(x1, y1); meshContext.lineTo(x2, y2); }
+    }
+    meshContext.stroke();
+  }
 
   const signature = document.createElement('div');
   signature.innerHTML = signatureMarkup;
@@ -70,6 +75,7 @@ export function initAbout({ scrollArea, about, nav, signatureMarkup }) {
       path.style.visibility = 'visible';
     });
     pen.style.opacity = '0';
+    drawMesh(1, false);
     about.classList.remove('about-playing');
   }
 
@@ -86,6 +92,7 @@ export function initAbout({ scrollArea, about, nav, signatureMarkup }) {
     });
     pen.style.opacity = '0';
     about.classList.add('about-playing');
+    drawMesh(0, true);
   }
 
   function penAt(path, distance) {
@@ -138,6 +145,7 @@ export function initAbout({ scrollArea, about, nav, signatureMarkup }) {
           if (id !== runId) return resolve();
           const progress = Math.min(1, (now - scanStart) / 3000);
           frame.style.setProperty('--scan', `${progress * 100}%`);
+          drawMesh(progress, true);
           if (progress < 1) requestAnimationFrame(scan);
           else resolve();
         }
@@ -146,6 +154,7 @@ export function initAbout({ scrollArea, about, nav, signatureMarkup }) {
       if (id !== runId) return;
       frame.classList.remove('scan-active', 'scan-prepared');
       frame.classList.add('scan-done');
+      drawMesh(1, false);
       portrait.classList.add('has-signature');
       sign.style.opacity = '1';
       await drawSignature(id);
