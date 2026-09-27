@@ -146,5 +146,5 @@ body:has(#about.about-playing) .scroll-area { z-index: 3; }
 #about .about-layout .portrait-exit{width:min(100%,350px);margin-top:0}
 #about .about-layout .portrait-reveal{aspect-ratio:395 / 320;border-radius:0;overflow:hidden;background:transparent}
 #about .portrait-reveal .portrait-color{object-fit:contain;object-position:center;width:100%;height:100%;filter:none}
-#about .portrait-reveal .portrait-wireframe{left:23%;top:4%;width:54%;height:auto;object-fit:contain}
+#about .portrait-reveal .portrait-wireframe{left:16.5%;top:0;width:67%;height:auto;object-fit:contain}
 @media(max-width:760px){#about .about-layout .portrait-exit{width:min(100%,350px)}#about .about-layout .portrait-reveal{width:100%}}
