@@ -97,3 +97,25 @@ body{background:var(--bg)}
 .portrait-reveal.is-scanning .portrait-color{clip-path:inset(0 0 100% 0);animation:portrait-reveal 1.2s cubic-bezier(.2,.7,.2,1) forwards}
 .portrait-reveal.is-scanning .portrait-color{animation-duration:2.5s}.portrait-reveal.is-scanning .portrait-scan{animation-duration:2.5s}.portrait-reveal.is-scanning .portrait-corners{animation-duration:2.5s}
 .portrait-scan,.portrait-corners{display:none}.portrait-exit{aspect-ratio:auto;padding-bottom:0;position:relative}.portrait-reveal{aspect-ratio:3/4;height:auto}.portrait-reveal.is-drawing .portrait-color{opacity:0}.portrait-reveal.is-drawing .portrait-drawing{opacity:1}.portrait-reveal.is-complete .portrait-color{opacity:1}.portrait-drawing{position:absolute;inset:0;width:100%;height:100%;z-index:3;opacity:0;pointer-events:none;overflow:visible}.portrait-drawing image{width:100%;height:100%}.portrait-mask-path{fill:none;stroke:#fff;stroke-width:112;stroke-linecap:round;stroke-linejoin:round}.portrait-signature{position:relative;z-index:3;display:block;left:auto;top:auto;width:92%;height:62px;margin:20px auto 0;overflow:visible;opacity:0;pointer-events:none}.portrait-signature path{fill:none;stroke:#f4f7f7;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.portrait-exit.has-signature .portrait-signature{opacity:1}.portrait-stylus{position:absolute;z-index:6;left:4%;top:6%;width:30px;height:8px;border-radius:5px;background:linear-gradient(90deg,#768084,#e8eeee 48%,#7b8588);box-shadow:0 0 5px rgba(195,227,230,.28);opacity:0;transform-origin:5px 50%;pointer-events:none}.portrait-stylus:before{content:"";position:absolute;left:-6px;top:2px;border-top:2px solid #687276;border-right:7px solid transparent}.portrait-stylus i{position:absolute;left:-8px;top:1px;width:4px;height:4px;border-radius:50%;background:#9bdbe2;box-shadow:0 0 7px rgba(143,199,207,.85)}.portrait-exit:not(.has-signature) .portrait-signature{opacity:0}.portrait-exit:has(.portrait-reveal.is-drawing) .portrait-stylus{opacity:1}
+
+/* The About scan has one owner; these states supersede the retired drawing rules. */
+#about.about-playing { overflow: visible; }
+#about .about-foreground { z-index: 3; }
+#about.is-copy-hidden .section-head, #about.is-copy-hidden .prose { opacity: 0; pointer-events: none; }
+#about .section-head { transition: opacity .35s ease; }
+#about .portrait-reveal { background: transparent; }
+#about .portrait-reveal .portrait-color { opacity: 1; animation: none; filter: saturate(.92) contrast(.98); }
+#about .portrait-reveal.scan-prepared .portrait-color { clip-path: inset(0 0 100% 0); opacity: 0; }
+#about .portrait-reveal.scan-active .portrait-color { clip-path: inset(0 0 calc(100% - var(--scan, 0%)) 0); opacity: 1; }
+#about .portrait-reveal.scan-done .portrait-color { clip-path: inset(0); opacity: 1; }
+#about .portrait-reveal .face-mesh { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; opacity: 0; stroke: #9dcbd0; fill: none; stroke-width: .45; stroke-linecap: round; filter: drop-shadow(0 0 2px #8fc7cf); }
+#about .portrait-reveal.scan-active .face-mesh { opacity: .8; clip-path: inset(var(--scan, 0%) 0 0 0); }
+#about .portrait-reveal .portrait-scan { display: none; animation: none; }
+#about .portrait-reveal.scan-active .portrait-scan { display: block; opacity: 1; top: var(--scan, 0%); height: 3px; z-index: 5; background: #acdbe0; box-shadow: 0 0 18px 4px rgba(143,199,207,.5); }
+#about .portrait-reveal .portrait-corners { display: none; }
+#about .portrait-signature { display: block; opacity: 0; margin: 14px auto 0; overflow: visible; }
+#about .portrait-signature path { fill: none; stroke: var(--cyan); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+#about .portrait-stylus { pointer-events: none; z-index: 7; }
+#about .portrait-exit { opacity: 1; transform: none; visibility: visible; }
+@media (prefers-reduced-motion: reduce) { #about .portrait-reveal.scan-done .portrait-color { opacity: 1; } }
+body:has(#about.about-playing) .scroll-area { z-index: 3; }
