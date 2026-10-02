@@ -12,7 +12,7 @@ document.querySelector('#app').innerHTML=`
 <header class="topbar" data-header>
 <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav"><span class="sr-only">Open menu</span><i></i><i></i></button>
 <nav id="nav" aria-label="Primary navigation"><a href="#about">About</a><a href="#experience">Experience</a><a href="#projects">Projects</a><a href="#research">Research</a><a href="#skills">Skills</a><a href="#contact">Contact</a></nav>
-<a class="resume-download" href="${person.resume}" download="Adhithi-Mudaliyar-Resume.pdf">Résumé ↓</a>
+<a class="resume-download" href="${person.resume}" download="addy_resume.pdf">Résumé ↓</a>
  </header>
 <main id="main"><aside class="anatomy-stage" aria-label="Animated anatomical skeleton"><div class="stage-frame"><canvas id="anatomy-canvas"></canvas><img class="skeleton-fallback" src="/images/skeleton-fallback.png" alt=""/><div class="load-status" aria-live="polite">Loading anatomy…</div><button class="motion-toggle" type="button" aria-pressed="false"><span class="motion-dot"></span><span data-motion-label>Pause motion</span></button><a class="model-credit" href="https://github.com/yamz8/human-body-simulator" target="_blank" rel="noopener">Model attribution ↗</a></div></aside><div class="scroll-area"><div class="story-column">
 <section class="panel hero" id="home" data-view="full" aria-labelledby="hero-title"><p class="hero-name">${person.name}</p><h1 id="hero-title">Somewhere between a stethoscope and a line of code is where my curiosity lives.</h1><p class="hero-copy">Hi, I’m Addy. AI student, curious by default. Big on healthcare, bigger on BTS.</p></section>
